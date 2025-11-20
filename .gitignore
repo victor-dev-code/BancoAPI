@@ -121,5 +121,3 @@ application-example.yml
 !.mvn/wrapper/maven-wrapper.properties
 !.mvn/wrapper/maven-wrapperDownloader.java
 .mvn/wrapper/maven-wrapper.jar
-
-src/main/java/com/es/banco/app/banco_hcb
