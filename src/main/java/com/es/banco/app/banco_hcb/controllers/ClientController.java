@@ -1,14 +1,20 @@
 package com.es.banco.app.banco_hcb.controllers;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateClientDTO;
-import com.es.banco.app.banco_hcb.dtos.responses.ClientSavedDTO;
+import com.es.banco.app.banco_hcb.dtos.responses.*;
 import com.es.banco.app.banco_hcb.services.impl.ClientServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Slf4j
 @RestController
@@ -25,4 +31,25 @@ public class ClientController {
         ClientSavedDTO response = clientService.save(clientDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientResponseDTO> getById(@PathVariable UUID id) {
+        Optional<ClientResponseDTO> clientDTO = clientService.getById(id);
+        return clientDTO.map(
+            ResponseEntity::ok
+        ).orElseGet(
+            () -> ResponseEntity.notFound().build()
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<ClientResponseDTO> getByfullname(@RequestParam String name) {
+        Optional<ClientResponseDTO> clientDTO = clientService.getByFullname(name);
+        return clientDTO.map(
+            ResponseEntity::ok
+        ).orElseGet(
+            () -> ResponseEntity.notFound().build()
+        );
+    }
+    
 }

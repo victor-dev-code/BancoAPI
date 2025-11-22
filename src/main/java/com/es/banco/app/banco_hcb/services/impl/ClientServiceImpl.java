@@ -33,16 +33,22 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Optional<ClientResponseDTO> getById(UUID id) {
-        return null;
+        log.info("Se busca la informacion de cliente con el id {}", id );
+        return clientRepository.findById(id).map(
+            client -> clientMapper.responseDTO(client)
+        );
     }
 
     @Override
     public Optional<ClientResponseDTO> getByFullname(String fullname) {
-        return null;
+        log.info("Se busca la informacion de cliente con el nombre {}", fullname );
+        return clientRepository.findByFullname(fullname).map(
+            client -> clientMapper.responseDTO(client)
+        );
     }
 
     @Override
-    public List<ClientResponseDTO> getAllUsers() {
+    public List<ClientResponseDTO> getAllClients() {
         return null;
     }
 

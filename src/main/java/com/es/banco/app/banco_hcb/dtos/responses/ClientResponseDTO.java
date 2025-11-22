@@ -10,8 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientResponseDTO {
-    private String name;
-    private String lastname;
+    private String fullname;
     private String curp;
     private String rfc;
 
