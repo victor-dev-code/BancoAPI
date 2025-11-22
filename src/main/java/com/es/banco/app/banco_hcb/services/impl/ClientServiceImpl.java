@@ -3,6 +3,7 @@ package com.es.banco.app.banco_hcb.services.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,9 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientResponseDTO> getAllClients() {
-        return null;
+        return clientRepository.findAll().stream().map(
+            client -> clientMapper.responseDTO(client)
+        ).collect(Collectors.toList());
     }
 
     @Override
