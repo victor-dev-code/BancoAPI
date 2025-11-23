@@ -26,7 +26,13 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientSavedDTO save(CreateClientDTO clientDTO) {
-        log.info("Se inicia la creacion de un nuevo cliente con el nombre {}", clientDTO.getName());
+        log.info("Se busca dentro de la base de datos si el cliente {} solicitado ya existe", clientDTO.getName());
+
+        if (clientRepository.existsByCurp(clientDTO.getCurp()) || clientRepository.existsByRfc(clientDTO.getRfc())) {
+            log.error("El cliente ya se encuentra registrado en la base de datos, el RFC o CURP ya estan en el sistema");
+
+        }
+
         Client client = clientMapper.toEntity(clientDTO);
         Client clientSaved = clientRepository.save(client);
         return clientMapper.toDTO(clientSaved);    
@@ -36,22 +42,23 @@ public class ClientServiceImpl implements ClientService {
     public Optional<ClientResponseDTO> getById(UUID id) {
         log.info("Se busca la informacion de cliente con el id {}", id );
         return clientRepository.findById(id).map(
-            client -> clientMapper.responseDTO(client)
+            clientMapper::responseDTO
         );
     }
 
     @Override
-    public Optional<ClientResponseDTO> getByFullname(String fullname) {
+    public List<ClientResponseDTO> getByFullname(String fullname) {
         log.info("Se busca la informacion de cliente con el nombre {}", fullname );
-        return clientRepository.findByFullname(fullname).map(
-            client -> clientMapper.responseDTO(client)
-        );
+        return clientRepository.getAllClientsByFullname(fullname).stream().map(
+            clientMapper::responseDTO
+        ).collect(Collectors.toList());
     }
-
+    
     @Override
     public List<ClientResponseDTO> getAllClients() {
+        log.info("Se obtiene la informacion de todos los clientes registrados en el sistema" );
         return clientRepository.findAll().stream().map(
-            client -> clientMapper.responseDTO(client)
+            clientMapper::responseDTO
         ).collect(Collectors.toList());
     }
 

@@ -10,7 +10,7 @@ import com.es.banco.app.banco_hcb.dtos.responses.*;
 public interface ClientService {
     ClientSavedDTO save(CreateClientDTO clientDTO);
     Optional<ClientResponseDTO> getById(UUID id);
-    Optional<ClientResponseDTO> getByFullname(String fullname);
+    List<ClientResponseDTO> getByFullname(String fullname);
     List<ClientResponseDTO> getAllClients();
     Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO);
 }
