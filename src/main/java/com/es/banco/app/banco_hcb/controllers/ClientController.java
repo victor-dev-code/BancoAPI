@@ -1,17 +1,15 @@
 package com.es.banco.app.banco_hcb.controllers;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateClientDTO;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
 import com.es.banco.app.banco_hcb.services.impl.ClientServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +26,7 @@ public class ClientController {
     }
 
     @PostMapping("/save_new_client")
-    public ResponseEntity<ClientSavedDTO> save(@RequestBody CreateClientDTO clientDTO) {
+    public ResponseEntity<ClientSavedDTO> save(@Valid @RequestBody CreateClientDTO clientDTO) {
         log.info("Se obtiene la informacion proporcionada por el cliente {} ", clientDTO);
         ClientSavedDTO response = clientService.save(clientDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

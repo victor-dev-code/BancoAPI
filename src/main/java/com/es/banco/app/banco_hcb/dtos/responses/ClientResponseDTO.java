@@ -15,7 +15,7 @@ public class ClientResponseDTO {
     private String rfc;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
+    private LocalDate birthdate;
 
     private String phone;
 }

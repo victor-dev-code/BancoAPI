@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateClientDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
+    private LocalDate birthdate;
     private String phone;
 }
