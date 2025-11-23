@@ -32,7 +32,7 @@ public class Client {
     private String rfc;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate birthday;
+    private LocalDate birthdate;
 
     @Column(updatable = false, name = "creation_date")
     @CreationTimestamp

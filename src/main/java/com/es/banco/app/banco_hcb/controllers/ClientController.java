@@ -1,17 +1,15 @@
 package com.es.banco.app.banco_hcb.controllers;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateClientDTO;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
 import com.es.banco.app.banco_hcb.services.impl.ClientServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +26,8 @@ public class ClientController {
     }
 
     @PostMapping("/save_new_client")
-    public ResponseEntity<ClientSavedDTO> save(@RequestBody CreateClientDTO clientDTO) {
-        log.info("Se obtiene la informacion proporcionada por el cliente {} ", clientDTO);
+    public ResponseEntity<ClientSavedDTO> save(@Valid @RequestBody CreateClientDTO clientDTO) {
+        log.info("Se obtiene la informacion proporcionada por el nuevo cliente {} ", clientDTO);
         ClientSavedDTO response = clientService.save(clientDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -45,21 +43,20 @@ public class ClientController {
         );
     }
 
-    @GetMapping("client")
-    public ResponseEntity<ClientResponseDTO> getByfullname(@RequestParam String name) {
+    @GetMapping("/client")
+    public ResponseEntity<List<ClientResponseDTO>> getByfullname(@RequestParam String name) {
         log.info("Se busca dentro de la base de datos la informacion del cliente {} solicitado", name);
-        Optional<ClientResponseDTO> clientDTO = clientService.getByFullname(name);
-        return clientDTO.map(
-            ResponseEntity::ok
-        ).orElseGet(
-            () -> ResponseEntity.notFound().build()
-        );
+        List<ClientResponseDTO> clientDTO = clientService.getByFullname(name);
+        if (clientDTO.isEmpty())
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(clientDTO);
     }
 
     @GetMapping
     public ResponseEntity<List<ClientResponseDTO>> getAllClients() {
+        log.info("Se busca dentro de la base de datos la informacion de los usuarios.");
         List<ClientResponseDTO> clientDTO = clientService.getAllClients();
-        if (clientDTO.isEmpty()) 
+        if (clientDTO.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(clientDTO);
     }
