@@ -13,4 +13,5 @@ public interface ClientService {
     List<ClientResponseDTO> getByFullname(String fullname);
     List<ClientResponseDTO> getAllClients();
     Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO);
+    boolean existsById(UUID id);
 }

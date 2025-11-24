@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.es.banco.app.banco_hcb.dtos.requests.*;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
+import com.es.banco.app.banco_hcb.exceptions.UserAlreadyExistsException;
 import com.es.banco.app.banco_hcb.mapper.ClientMapper;
 import com.es.banco.app.banco_hcb.model.Client;
 import com.es.banco.app.banco_hcb.repositories.ClientRepository;
@@ -28,13 +29,14 @@ public class ClientServiceImpl implements ClientService {
     public ClientSavedDTO save(CreateClientDTO clientDTO) {
         log.info("Se busca dentro de la base de datos si el cliente {} solicitado ya existe", clientDTO.getName());
 
-        if (clientRepository.existsByCurp(clientDTO.getCurp()) || clientRepository.existsByRfc(clientDTO.getRfc())) {
+        if (clientRepository.existsByRfcOrCurp(clientDTO.getRfc(), clientDTO.getCurp())) {
             log.error("El cliente ya se encuentra registrado en la base de datos, el RFC o CURP ya estan en el sistema");
-
+            throw new UserAlreadyExistsException("El cliente ya se encuentra registrado en la base de datos, el RFC o CURP ya estan en el sistema");
         }
 
         Client client = clientMapper.toEntity(clientDTO);
         Client clientSaved = clientRepository.save(client);
+        log.info("Se ha registrado un nuevo cliente.");
         return clientMapper.toDTO(clientSaved);    
     }
 
@@ -66,5 +68,10 @@ public class ClientServiceImpl implements ClientService {
     public Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO) {
         return null;
     }
+
+	@Override
+	public boolean existsById(UUID id) {
+		return clientRepository.existsById(id);
+	}
     
 }

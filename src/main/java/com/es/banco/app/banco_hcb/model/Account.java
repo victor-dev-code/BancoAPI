@@ -31,9 +31,9 @@ public class Account {
     @Enumerated(EnumType.STRING)
     private AccountTypeCodeEnum accountType;
     @Column(name = "available_balance")
-    private BigDecimal balance;
+    private BigDecimal balance ;
 
-    @Column(name = "state")
+    @Column(name = "status")
     @Builder.Default
     private boolean isActive = true;
 
