@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateAccountDTO;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
+import com.es.banco.app.banco_hcb.exceptions.ClientNotFoundException;
 import com.es.banco.app.banco_hcb.mapper.AccountMapper;
 import com.es.banco.app.banco_hcb.model.*;
 import com.es.banco.app.banco_hcb.repositories.*;
@@ -31,19 +32,16 @@ public class AccountServiceImpl implements AccountService {
         
         Account account = accountMapper.toEntity(accountDTO);
        
-        Client client = clientRepository.findById(idClient).get();
-        account.setClient(client);
+        Client client = clientRepository.findById(idClient).orElseThrow(
+            () -> new ClientNotFoundException("Cliente no se ha encontrado en la base de datos.")
+        );
+        
         log.info("Se obtiene el cliente solicitado para realizar el registro ");
-       
-        if (clientRepository.existsByRfcOrCurp(client.getRfc(), client.getCurp())) {
-           log.info("El cliente {} no esta registrado en la base de datos.", idClient);
-           throw new RuntimeException("No esta registrado el cliente en la base de datos.");            
-        }
-
-        if (accountDTO.getBalance() == null) {
-            log.info("No se cuenta con ningun saldo en la cuenta.");
-            account.setBalance(BigDecimal.ZERO);
-        }
+        
+        validateClientExists(client);
+        addZeroBalance(account, accountDTO);
+        
+        account.setClient(client);
 
         Account accountSaved = accountRepository.save(account);
         log.info("Se ha registrado una nueva cuenta para el cliente {}.", idClient);
@@ -65,5 +63,24 @@ public class AccountServiceImpl implements AccountService {
         return null;
     }
 
-    
+    @Override
+    public Account addZeroBalance(Account account, CreateAccountDTO accountDTO) {
+        if (accountDTO.getBalance() == null) {
+            log.info("La cuenta del cliente actualmente tiene el saldo cero pesos.");
+            account.setBalance(BigDecimal.ZERO);
+        }
+        return account;
+    }
+
+    @Override
+    public void validateClientExists(Client client) {
+        boolean existsClient = clientRepository.existsByRfcOrCurp(client.getRfc(), client.getCurp());
+
+        if (!existsClient) {
+            log.warn("No se cuenta con la informacion de registro del cliente con el id {} en la base de datos.", client.getId());
+            throw new ClientNotFoundException("No esta registrada la informacion del cliente en la base de datos.");
+        }
+        log.info("Se ha encontrado la informacion del cliente con id {} en la base de datos del sistema.", client.getId());
+    }
+
 }

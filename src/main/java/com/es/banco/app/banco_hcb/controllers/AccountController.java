@@ -21,31 +21,10 @@ public class AccountController {
     public AccountController(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
-
-    /* @PostMapping("/client/{idClient}/new_account")
-    public ResponseEntity<AccountCreatedDTO> save(
-            @RequestBody(required = true) CreateAccountDTO accountDTO,
-            @PathVariable UUID idClient,
-            HttpServletRequest request) {
-
-        log.info("RAW BODY:");
-        try (BufferedReader reader = request.getReader()) {
-            reader.lines().forEach(line -> log.info(">> {}", line));
-        } catch (Exception e) {
-            log.error("Error leyendo input", e);
-        }
-
-        log.info("DTO recibido: {}", accountDTO);
-
-        AccountCreatedDTO response = accountService.save(accountDTO, idClient);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    } */
-
     
     @PostMapping("/client/{idClient}/new_account")
     public ResponseEntity<AccountCreatedDTO> save(@Valid @RequestBody CreateAccountDTO accountDTO, @PathVariable UUID idClient) {
         log.info("Se inicia registro de nueva tarjeta para el cliente con el id {} ", idClient);
-        log.info("DTO recibido: {}", accountDTO);
         AccountCreatedDTO response = accountService.save(accountDTO, idClient);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }  
