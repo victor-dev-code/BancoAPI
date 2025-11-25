@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateClientDTO;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
+import com.es.banco.app.banco_hcb.exceptions.ClientNotFoundException;
 import com.es.banco.app.banco_hcb.services.impl.ClientServiceImpl;
 
 import jakarta.validation.Valid;
@@ -38,8 +39,8 @@ public class ClientController {
         Optional<ClientResponseDTO> clientDTO = clientService.getById(id);
         return clientDTO.map(
             ResponseEntity::ok
-        ).orElseGet(
-            () -> ResponseEntity.notFound().build()
+        ).orElseThrow(
+            () -> new ClientNotFoundException("Cliente no se ha encontrado en la base de datos.")
         );
     }
 
