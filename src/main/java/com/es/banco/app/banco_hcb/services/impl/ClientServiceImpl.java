@@ -68,10 +68,5 @@ public class ClientServiceImpl implements ClientService {
     public Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO) {
         return null;
     }
-
-	@Override
-	public boolean existsById(UUID id) {
-		return clientRepository.existsById(id);
-	}
     
 }

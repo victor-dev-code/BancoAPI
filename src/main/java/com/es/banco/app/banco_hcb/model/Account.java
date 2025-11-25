@@ -45,6 +45,7 @@ public class Account {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @Builder.Default

@@ -1,9 +1,7 @@
 package com.es.banco.app.banco_hcb.services.impl;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -50,12 +48,38 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<AccountResponseDTO> findByNumber(String number) {
-        return null;
+        log.info("Se ha encontrado la informacion de la cuenta");
+        return accountRepository.findByNumber(number).map(
+            accountMapper::toResponseDTO
+        );
     }
 
     @Override
-    public List<AccountResponseDTO> getAllAccounts(UUID idClient) {
-        return null;
+    public Optional<ClientWithAccountsDTO> getAllAccounts(UUID idClient) {
+        log.info("Buscando informacion del usuario...");
+        Client client = clientRepository.findById(idClient)
+            .orElseThrow(() -> new ClientNotFoundException("Cliente no se ha encontrado en la base de datos."));
+
+        log.info("Se han encontrado la informacion de las cuentas del cliente {} registrado en la base de datos.", idClient);
+        List<AccountsDTO> accounts = client.getAccounts().stream().map(
+            account -> new AccountsDTO(
+                account.getNumber(),
+                account.getAccountType(),
+                account.getBalance(),
+                account.isActive(),
+                account.getCreatedAt()
+            )).toList();
+                
+        log.info("Se encuentra la informacion del cliente {} registrado en la base de datos.", idClient);
+        return Optional.of(new ClientWithAccountsDTO(
+            client.getFullname(),
+            client.getCurp(),
+            client.getRfc(),
+            client.getBirthdate(),
+            client.getPhone(),
+            accounts
+        ));
+
     }
 
     @Override
