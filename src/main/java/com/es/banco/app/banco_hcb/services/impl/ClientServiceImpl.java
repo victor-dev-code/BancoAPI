@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.es.banco.app.banco_hcb.dtos.requests.*;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
+import com.es.banco.app.banco_hcb.exceptions.ClientNotFoundException;
 import com.es.banco.app.banco_hcb.exceptions.UserAlreadyExistsException;
 import com.es.banco.app.banco_hcb.mapper.ClientMapper;
 import com.es.banco.app.banco_hcb.model.Client;
@@ -65,8 +66,20 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO) {
-        return null;
+    public ClientSavedDTO updateClient(UpdateClientDTO clientDTO, UUID id) {
+        log.info("Se busca el usuario en la base de datos.");
+        return clientRepository.findById(id).map(
+            clientDB -> {
+                log.info("Guardando información del cliente {} en la base de datos.", id);
+                clientDB.setBirthdate(clientDTO.getBirthdate());
+                clientDB.setPhone(clientDTO.getPhone());
+                clientRepository.save(clientDB);
+                log.info("Se ha terminado el proceso de manera exitosa.");
+                return clientMapper.toDTO(clientDB);
+            }
+        ).orElseThrow(
+            () -> new ClientNotFoundException("Cliente "+ id +" no se ha encontrado en la base de datos.")
+        ); 
     }
     
 }

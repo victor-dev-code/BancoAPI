@@ -6,14 +6,13 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.es.banco.app.banco_hcb.dtos.requests.CreateClientDTO;
+import com.es.banco.app.banco_hcb.dtos.requests.UpdateClientDTO;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
 import com.es.banco.app.banco_hcb.exceptions.ClientNotFoundException;
 import com.es.banco.app.banco_hcb.services.impl.ClientServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Slf4j
@@ -60,6 +59,13 @@ public class ClientController {
         if (clientDTO.isEmpty())
             return ResponseEntity.noContent().build();
         return ResponseEntity.ok(clientDTO);
+    }
+
+    @PatchMapping("/client/{id}")
+    public ResponseEntity<ClientSavedDTO> updateClient(@Valid @RequestBody UpdateClientDTO clientDTO, @PathVariable UUID id) {
+        log.info("Se obtiene la informacion proporcionada por el nuevo cliente {} ", clientDTO);
+        ClientSavedDTO response = clientService.updateClient(clientDTO, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
 }

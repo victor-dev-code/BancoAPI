@@ -12,5 +12,5 @@ public interface ClientService {
     Optional<ClientResponseDTO> getById(UUID id);
     List<ClientResponseDTO> getByFullname(String fullname);
     List<ClientResponseDTO> getAllClients();
-    Optional<ClientResponseDTO> updateClient(UpdateClientDTO clientDTO);
+    ClientSavedDTO updateClient(UpdateClientDTO clientDTO, UUID id);
 }
