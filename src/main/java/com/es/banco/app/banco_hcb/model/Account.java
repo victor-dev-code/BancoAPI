@@ -25,13 +25,16 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(name = "account_number", unique = true)
+    @Column(name = "account_number", unique = true, length = 11)
     private String number;
+
+    @Column(name = "clabe_number", unique = true, length = 18)
+    private String clabe;
 
     @Enumerated(EnumType.STRING)
     private AccountTypeCodeEnum accountType;
     @Column(name = "available_balance")
-    private BigDecimal balance ;
+    private BigDecimal balance;
 
     @Column(name = "status")
     @Builder.Default
@@ -56,10 +59,10 @@ public class Account {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((number == null) ? 0 : number.hashCode());
+        result = prime * result + ((clabe == null) ? 0 : clabe.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -69,19 +72,12 @@ public class Account {
         if (getClass() != obj.getClass())
             return false;
         Account other = (Account) obj;
-        if (id == null) {
-            if (other.id != null)
+        if (clabe == null) {
+            if (other.clabe != null)
                 return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (number == null) {
-            if (other.number != null)
-                return false;
-        } else if (!number.equals(other.number))
+        } else if (!clabe.equals(other.clabe))
             return false;
         return true;
-    }
-
-    
+    }   
 
 }

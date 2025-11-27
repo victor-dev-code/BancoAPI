@@ -4,15 +4,14 @@ import java.math.BigDecimal;
 
 import com.es.banco.app.banco_hcb.model.enums.AccountTypeCodeEnum;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateAccountDTO {
-    @NotBlank(message = "El numero de tarjeta no debe estar vacio")
-    private String number;
+    @NotNull(message = "Se debe seleccionar el tipo de cuenta.")
     private AccountTypeCodeEnum accountType;
     private BigDecimal balance;
 }

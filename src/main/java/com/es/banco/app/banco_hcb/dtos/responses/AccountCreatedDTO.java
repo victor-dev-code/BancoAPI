@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountCreatedDTO {
     private UUID id;
-    private String number;
+    private String clabe;
 }
