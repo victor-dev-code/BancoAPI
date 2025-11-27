@@ -1,19 +1,17 @@
 package com.es.banco.app.banco_hcb.services.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.es.banco.app.banco_hcb.dtos.requests.*;
 import com.es.banco.app.banco_hcb.dtos.responses.*;
-import com.es.banco.app.banco_hcb.exceptions.ClientNotFoundException;
-import com.es.banco.app.banco_hcb.exceptions.UserAlreadyExistsException;
+import com.es.banco.app.banco_hcb.exceptions.*;
 import com.es.banco.app.banco_hcb.mapper.ClientMapper;
-import com.es.banco.app.banco_hcb.model.Client;
-import com.es.banco.app.banco_hcb.repositories.ClientRepository;
+import com.es.banco.app.banco_hcb.model.*;
+import com.es.banco.app.banco_hcb.repositories.*;
 import com.es.banco.app.banco_hcb.services.interfaces.ClientService;
 
 import lombok.RequiredArgsConstructor;
@@ -80,6 +78,49 @@ public class ClientServiceImpl implements ClientService {
         ).orElseThrow(
             () -> new ClientNotFoundException("Cliente "+ id +" no se ha encontrado en la base de datos.")
         ); 
+    }
+
+    @Override
+    public ClientSavedDTO changeDisabledStatus(UUID id) {
+        log.info("Buscando la informacion del cliente {}.", id);
+
+        Client client = clientRepository.findById(id).orElseThrow(
+            () -> new ClientNotFoundException("Cliente no se ha encontrado en la base de datos.")
+        );
+
+        log.info("Se encuentra la informacion del cliente {}.", client.getFullname());
+        
+        if(!client.isActive()) {
+            log.warn("El cliente {} ya esta inactivo.", client.getFullname());
+            throw new IllegalStateException("El cliente " + client.getFullname() + " ya no se encuentra activo en el banco.");
+        }
+        
+        log.info("Verificando las cuentas del cliente {}.", client.getFullname());
+
+        List<Account> accounts = client.getAccounts();
+        
+        boolean hasNonZeroBalance = 
+            accounts.stream().anyMatch(account -> account.getBalance().compareTo(BigDecimal.ZERO) != 0);
+        
+        if (hasNonZeroBalance) {
+            log.info("El cliente {} tiene alguna cuenta con saldo activo.", client.getFullname());
+            throw new IllegalStateException("Alguna cuenta todavia tiene con saldo activo, la cuenta debe estar en $0 MXN y no contar con saldo pendiente.");
+
+        }
+
+        accounts.forEach(account -> {
+            log.info("Desactivando cuenta {}...", account.getNumber());
+            account.setActive(false);
+        });
+            
+        log.info("Todas las cuentas se han desactivado. Procediendo a desactivar cliente. ");
+
+
+        client.setActive(false);
+        clientRepository.save(client);
+        
+        log.info("El cliente {} se ha desactivado correctamente.", client.getFullname());
+        return clientMapper.toDTO(client);
     }
     
 }

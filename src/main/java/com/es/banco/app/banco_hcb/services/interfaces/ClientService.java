@@ -13,4 +13,5 @@ public interface ClientService {
     List<ClientResponseDTO> getByFullname(String fullname);
     List<ClientResponseDTO> getAllClients();
     ClientSavedDTO updateClient(UpdateClientDTO clientDTO, UUID id);
+    ClientSavedDTO changeDisabledStatus(UUID id);
 }
