@@ -4,15 +4,16 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateClientDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "La fecha de cumpleaños no debe estar vacia.")
     private LocalDate birthdate;
+    @NotBlank(message = "El numero de telefono no debe estar vacio.")
     private String phone;
 }

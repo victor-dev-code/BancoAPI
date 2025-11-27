@@ -14,4 +14,5 @@ public interface ClientMapper {
     ClientSavedDTO toDTO(Client client);
 
     ClientResponseDTO responseDTO(Client client);
+    
 }

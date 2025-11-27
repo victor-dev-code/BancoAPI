@@ -40,6 +40,10 @@ public class Client {
     @UpdateTimestamp
     private LocalDateTime updateDate;
 
+    @Builder.Default
+    @Column(name = "status")
+    private boolean isActive = true;
+
     @Column(unique = true)
     private String phone;
 
