@@ -52,5 +52,19 @@ public class AccountController {
         );
     }
 
+    @PatchMapping("/account/disabled")
+    public ResponseEntity<AccountCreatedDTO> changeDisabledStatus(@RequestParam String number) {
+        log.info("Iniciando el cambio de estatus de la cuenta {} ", number);
+        AccountCreatedDTO response = accountService.changeDisabledStatus(number);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PatchMapping("/account/active")
+    public ResponseEntity<AccountCreatedDTO> changeActiveStatus(@RequestParam String number) {
+        log.info("Iniciando el cambio de estatus de la cuenta {} ", number);
+        AccountCreatedDTO response = accountService.changeActiveStatus(number);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     
 }

@@ -10,7 +10,8 @@ public interface AccountService {
     AccountCreatedDTO save(CreateAccountDTO accountDTO, UUID idClient);
     Optional<AccountResponseDTO> findByNumber(String number);
     Optional<ClientWithAccountsDTO> getAllAccounts(UUID idClient);
-    Boolean updateStatus();
     Account addZeroBalance(Account account, CreateAccountDTO createdDTO);
     void validateClientExists(Client client);
+    AccountCreatedDTO changeDisabledStatus(String number);
+    AccountCreatedDTO changeActiveStatus(String number);
 }

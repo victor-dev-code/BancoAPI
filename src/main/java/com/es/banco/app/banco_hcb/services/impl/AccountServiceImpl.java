@@ -83,11 +83,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Boolean updateStatus() {
-        return null;
-    }
-
-    @Override
     public Account addZeroBalance(Account account, CreateAccountDTO accountDTO) {
         if (accountDTO.getBalance() == null) {
             log.info("La cuenta del cliente actualmente tiene el saldo cero pesos.");
@@ -105,6 +100,55 @@ public class AccountServiceImpl implements AccountService {
             throw new ClientNotFoundException("No esta registrada la informacion del cliente en la base de datos.");
         }
         log.info("Se ha encontrado la informacion del cliente con id {} en la base de datos del sistema.", client.getId());
+    }
+
+    @Override
+    public AccountCreatedDTO changeDisabledStatus(String number) {
+        log.info("Buscando la informacion de la cuenta {}.", number);
+        Account account = accountRepository.findByNumber(number).orElseThrow(
+            () -> new ClientNotFoundException("No se ha encontrado la cuenta con el numero " + number + " en la base de datos.")
+        );
+
+        log.info("Se encuentra la informacion de la cuenta {}.", account.getNumber());
+
+        if (!account.isActive()) {
+            log.warn("La cuenta {} ya esta inactiva.", account.getNumber());
+            throw new IllegalStateException("La cuenta " + account.getNumber() + " ya no se encuentra activa en el banco.");
+        }
+
+        boolean hasNonZeroBalance = account.getBalance().compareTo(BigDecimal.ZERO) != 0;
+        if (hasNonZeroBalance) {
+            log.warn("La cuenta con numero {} tiene saldo activo.", account.getNumber());
+            throw new IllegalStateException("La cuenta tiene saldo activo de " + account.getBalance() + ". La cuenta debe estar en $0.00 MXN y no contar con saldo pendiente.");
+        }
+
+        log.info("La cuenta no tiene saldo pendiente. Se procede a desactivarla.");
+        account.setActive(false);
+        accountRepository.save(account);
+
+        log.info("La cuenta {} se ha desactivado correctamente.", account.getNumber());
+
+        return accountMapper.toDTO(account);
+    }
+
+    @Override
+    public AccountCreatedDTO changeActiveStatus(String number) {
+        log.info("Buscando la informacion de la cuenta {}.", number);
+        Account account = accountRepository.findByNumber(number).orElseThrow(
+            () -> new ClientNotFoundException("No se ha encontrado la cuenta con el numero " + number + " en la base de datos.")
+        );
+        log.info("Se encuentra la informacion de la cuenta {}.", account.getNumber());
+
+        if (account.isActive()) {
+            log.warn("La cuenta {} ya esta activa.", account.getNumber());
+            throw new IllegalStateException("La cuenta " + account.getNumber() + " ya esta activa.");
+        }
+
+        account.setActive(true);
+        accountRepository.save(account);
+
+        log.info("La cuenta {} se ha activado correctamente.", account.getNumber());
+        return accountMapper.toDTO(account);
     }
 
 }
