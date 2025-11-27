@@ -14,4 +14,5 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
     List<Client> getAllClientsByFullname(String fullname);
     boolean existsByRfcOrCurp(String rfc, String curp);
     boolean existsById(UUID id);
+    
 }
