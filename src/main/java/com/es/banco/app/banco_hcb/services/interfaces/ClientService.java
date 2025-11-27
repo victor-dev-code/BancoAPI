@@ -14,4 +14,5 @@ public interface ClientService {
     List<ClientResponseDTO> getAllClients();
     ClientSavedDTO updateClient(UpdateClientDTO clientDTO, UUID id);
     ClientSavedDTO changeDisabledStatus(UUID id);
+    ClientSavedDTO changeActiveStatus(UUID id);
 }

@@ -74,5 +74,13 @@ public class ClientController {
         ClientSavedDTO response = clientService.changeDisabledStatus(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PatchMapping("/client/{id}/active")
+    public ResponseEntity<ClientSavedDTO> changeActiveStatus(@PathVariable UUID id) {
+        log.info("Iniciando el cambio de estatus del cliente {} ", id);
+        ClientSavedDTO response = clientService.changeActiveStatus(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    
     
 }

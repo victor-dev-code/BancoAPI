@@ -85,7 +85,7 @@ public class ClientServiceImpl implements ClientService {
         log.info("Buscando la informacion del cliente {}.", id);
 
         Client client = clientRepository.findById(id).orElseThrow(
-            () -> new ClientNotFoundException("Cliente no se ha encontrado en la base de datos.")
+            () -> new ClientNotFoundException("No se ha encontrado el cliente en la base de datos.")
         );
 
         log.info("Se encuentra la informacion del cliente {}.", client.getFullname());
@@ -104,7 +104,7 @@ public class ClientServiceImpl implements ClientService {
         
         if (hasNonZeroBalance) {
             log.info("El cliente {} tiene alguna cuenta con saldo activo.", client.getFullname());
-            throw new IllegalStateException("Alguna cuenta todavia tiene con saldo activo, la cuenta debe estar en $0 MXN y no contar con saldo pendiente.");
+            throw new IllegalStateException("Alguna cuenta esta con saldo activo, la cuenta debe estar en $0.00 MXN y no contar con saldo pendiente.");
 
         }
 
@@ -122,5 +122,30 @@ public class ClientServiceImpl implements ClientService {
         log.info("El cliente {} se ha desactivado correctamente.", client.getFullname());
         return clientMapper.toDTO(client);
     }
+
+	@Override
+	public ClientSavedDTO changeActiveStatus(UUID id) {
+        log.info("Buscando la informacion del cliente {}.", id);
+
+        Client client = clientRepository.findById(id).orElseThrow(
+            () -> new ClientNotFoundException("No se ha encontrado el cliente en la base de datos.")
+        );
+
+        log.info("Se encuentra la informacion del cliente {}.", client.getFullname());
+        
+        if(client.isActive()) {
+            log.warn("El cliente {} ya esta activo.", client.getFullname());
+            throw new IllegalStateException("El cliente " + client.getFullname() + " ya esta activo.");
+        }
+
+        client.setActive(true);
+        clientRepository.save(client);
+        
+        log.info("El cliente {} se ha desactivado correctamente.", client.getFullname());
+
+		return clientMapper.toDTO(client);
+	}
+
+    
     
 }
