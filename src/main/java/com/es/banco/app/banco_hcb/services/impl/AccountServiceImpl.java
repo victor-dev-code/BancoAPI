@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account addZeroBalance(Account account, CreateAccountDTO accountDTO) {
         if (accountDTO.getBalance() == null) {
-            log.info("La cuenta del cliente actualmente tiene el saldo cero pesos.");
+            log.info("La cuenta del cliente actualmente tiene el saldo de $0.00 MXN.");
             account.setBalance(BigDecimal.ZERO);
         }
         return account;
@@ -116,13 +116,8 @@ public class AccountServiceImpl implements AccountService {
             throw new IllegalStateException("La cuenta " + account.getNumber() + " ya no se encuentra activa en el banco.");
         }
 
-        boolean hasNonZeroBalance = account.getBalance().compareTo(BigDecimal.ZERO) != 0;
-        if (hasNonZeroBalance) {
-            log.warn("La cuenta con numero {} tiene saldo activo.", account.getNumber());
-            throw new IllegalStateException("La cuenta tiene saldo activo de " + account.getBalance() + ". La cuenta debe estar en $0.00 MXN y no contar con saldo pendiente.");
-        }
-
-        log.info("La cuenta no tiene saldo pendiente. Se procede a desactivarla.");
+        hasNonZeroBalance(account);
+        
         account.setActive(false);
         accountRepository.save(account);
 
@@ -149,6 +144,16 @@ public class AccountServiceImpl implements AccountService {
 
         log.info("La cuenta {} se ha activado correctamente.", account.getNumber());
         return accountMapper.toDTO(account);
+    }
+
+    @Override
+    public void hasNonZeroBalance(Account account) {
+        boolean hasNonZeroBalance = account.getBalance().compareTo(BigDecimal.ZERO) != 0;
+        if (hasNonZeroBalance) {
+            log.warn("La cuenta con numero {} tiene saldo activo.", account.getNumber());
+            throw new IllegalStateException("La cuenta tiene saldo activo de " + account.getBalance() + ". La cuenta debe estar en $0.00 MXN y no contar con saldo pendiente.");
+        }
+        log.info("La cuenta no tiene saldo pendiente. Se procede a desactivarla.");
     }
 
 }

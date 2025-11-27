@@ -14,4 +14,5 @@ public interface AccountService {
     void validateClientExists(Client client);
     AccountCreatedDTO changeDisabledStatus(String number);
     AccountCreatedDTO changeActiveStatus(String number);
+    void hasNonZeroBalance(Account account);
 }
